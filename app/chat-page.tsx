@@ -5,6 +5,23 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import type { SourceRef } from "./api/chat/route";
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function pickRandom<T>(arr: T[], n: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+// Fallback questions used before data/questions.json is generated
+const FALLBACK_QUESTIONS = [
+  "What is psychological safety and why does it matter?",
+  "How should a leader respond when things go wrong?",
+  "What makes the difference between a high-performing and a struggling team?",
+  "How do you build trust between teams in conflict?",
+  "What is single-threaded ownership?",
+  "How do you make better decisions under pressure?",
+];
+
 // ── Book data ─────────────────────────────────────────────────────────────────
 
 const CHAPTERS = [
@@ -15,13 +32,6 @@ const CHAPTERS = [
   { id: "ch4",   label: "The Choice Point",        icon: <IconFork /> },
   { id: "ch5",   label: "The AI Frontier",         icon: <IconCpu /> },
   { id: "concl", label: "Conclusion",              icon: <IconCheck /> },
-];
-
-const SUGGESTED = [
-  "What is psychological safety and why does it matter?",
-  "How should a leader respond when things go wrong?",
-  "What makes the difference between a high-performing and a struggling team?",
-  "How do you build trust between teams in conflict?",
 ];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -37,12 +47,21 @@ interface Message {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function ChatPage({ initialQuote }: { initialQuote: Quote }) {
+export default function ChatPage({
+  initialQuote,
+  allQuestions,
+}: {
+  initialQuote: Quote;
+  allQuestions: string[];
+}) {
+  const pool = allQuestions.length >= 4 ? allQuestions : FALLBACK_QUESTIONS;
+
   const [messages, setMessages]           = useState<Message[]>([]);
   const [input, setInput]                 = useState("");
   const [loading, setLoading]             = useState(false);
   const [activeSources, setActiveSources] = useState<SourceRef[]>([]);
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
+  const [suggested, setSuggested]         = useState<string[]>(() => pickRandom(pool, 4));
   const bottomRef                         = useRef<HTMLDivElement>(null);
   const inputRef                          = useRef<HTMLTextAreaElement>(null);
 
@@ -151,7 +170,7 @@ export default function ChatPage({ initialQuote }: { initialQuote: Quote }) {
 
         <div className="px-3 pt-4 pb-2">
           <button
-            onClick={() => { setMessages([]); setActiveSources([]); setActiveChapter(null); }}
+            onClick={() => { setMessages([]); setActiveSources([]); setActiveChapter(null); setSuggested(pickRandom(pool, 4)); }}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-navy/5 hover:bg-navy/10 text-navy text-sm font-medium transition-colors"
           >
             <span className="text-lg leading-none">+</span> New conversation
@@ -209,7 +228,7 @@ export default function ChatPage({ initialQuote }: { initialQuote: Quote }) {
             <div className="mt-6">
               <p className="text-center text-stone-400 text-sm mb-5">Not sure where to start? Try one of these:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
-                {SUGGESTED.map((q) => (
+                {suggested.map((q) => (
                   <button
                     key={q}
                     onClick={() => send(q)}
