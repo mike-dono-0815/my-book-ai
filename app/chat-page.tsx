@@ -284,7 +284,9 @@ export default function ChatPage({ initialQuote }: { initialQuote: Quote }) {
           <p className="text-[10px] font-semibold tracking-widest text-stone-400 uppercase mb-3">Today&apos;s Quote</p>
           <div className="relative">
             <IconQuote className="w-6 h-6 text-gold/40 mb-1" />
-            <p className="text-navy text-[15px] font-medium leading-relaxed italic">{initialQuote.text}</p>
+            <p className="text-navy text-[15px] font-medium leading-relaxed italic">
+              &ldquo;{initialQuote.text}&rdquo;
+            </p>
             <p className="mt-3 text-xs text-stone-400">— {initialQuote.source}</p>
           </div>
           <div className="flex gap-3 mt-4">
