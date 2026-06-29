@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, FormEvent } from "react";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
 import type { SourceRef } from "./api/chat/route";
 
 // ── Book data ─────────────────────────────────────────────────────────────────
@@ -228,13 +229,17 @@ export default function ChatPage({ initialQuote }: { initialQuote: Quote }) {
               }`}>
                 {msg.role === "user" ? "You" : <IconBookOpen className="w-4 h-4 text-gold" />}
               </div>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                msg.role === "user"
-                  ? "bg-stone-100 text-stone-700 rounded-tr-sm"
-                  : `bg-white border border-stone-200 text-stone-700 rounded-tl-sm shadow-sm ${msg.streaming ? "cursor" : ""}`
-              }`}>
-                {msg.content || (msg.streaming ? "" : "…")}
-              </div>
+              {msg.role === "user" ? (
+                <div className="max-w-[75%] rounded-2xl rounded-tr-sm px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap bg-stone-100 text-stone-700">
+                  {msg.content}
+                </div>
+              ) : (
+                <div className={`max-w-[75%] rounded-2xl rounded-tl-sm px-4 py-3 text-sm leading-relaxed bg-white border border-stone-200 text-stone-700 shadow-sm prose prose-sm prose-stone max-w-none ${msg.streaming ? "cursor" : ""}`}>
+                  {msg.content
+                    ? <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    : "…"}
+                </div>
+              )}
             </div>
           ))}
           <div ref={bottomRef} />

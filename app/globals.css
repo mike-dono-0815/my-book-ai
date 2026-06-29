@@ -8,6 +8,13 @@ html, body {
   height: 100%;
 }
 
+/* Prose overrides inside chat bubbles */
+.prose p:first-child { margin-top: 0; }
+.prose p:last-child  { margin-bottom: 0; }
+.prose strong { color: inherit; }
+.prose em     { color: inherit; }
+.prose ul, .prose ol { margin-top: 0.5em; margin-bottom: 0.5em; }
+
 /* Smooth streaming cursor */
 @keyframes blink {
   0%, 100% { opacity: 1; }
