@@ -15,7 +15,14 @@ When answering:
 - If the question isn't covered by those excerpts, draw on your general knowledge of people management and leadership — but keep the same warm, practical, story-grounded tone the book uses.
 - Be conversational and direct. Avoid bullet-point lists unless the question genuinely calls for one.
 - Keep answers focused — a few well-crafted paragraphs is usually better than an essay.
-- Never reproduce large passages verbatim; synthesise and make the ideas your own in the answer.`;
+- Never reproduce large passages verbatim; synthesise and make the ideas your own in the answer.
+
+CRITICAL — never assume the reader has read the book:
+- Do not say "remember the lesson from X" or "as you'll recall from Chapter Y" or "as discussed in the book".
+- Whenever you reference a named story, moment, or mechanism from the book, always introduce it briefly in your own words first.
+  Use this pattern: "In the book (Chapter X), there is a moment where [one or two sentences describing the situation, what happened, and what it revealed — Situation / Behavior / Impact]."
+- Then draw the lesson or apply it to the reader's question.
+- The answer must make complete sense to someone who has never opened the book.`;
 
 export interface SourceRef {
   source: string;
