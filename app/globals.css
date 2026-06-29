@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+html, body {
+  height: 100%;
+}
+
+/* Smooth streaming cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor::after {
+  content: "▍";
+  animation: blink 0.8s step-end infinite;
+  color: #A8821E;
+  font-size: 0.85em;
+  margin-left: 1px;
+}
