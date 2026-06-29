@@ -1,4 +1,6 @@
 import { NextRequest } from "next/server";
+import fs from "fs";
+import path from "path";
 import { GoogleGenAI } from "@google/genai";
 import { findTopChunks } from "@/lib/embeddings";
 
@@ -18,6 +20,21 @@ When answering:
 export interface SourceRef {
   source: string;
   section: string;
+}
+
+export interface PullQuote {
+  text: string;
+  source: string;
+}
+
+const allQuotes: PullQuote[] = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), "data/quotes.json"), "utf-8")
+);
+
+function pickQuoteForChapter(chapterSource: string): PullQuote | null {
+  const pool = allQuotes.filter((q) => q.source === chapterSource);
+  if (!pool.length) return null;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 export async function POST(req: NextRequest) {
@@ -55,6 +72,9 @@ export async function POST(req: NextRequest) {
     section: c.section,
   }));
 
+  // Pick a pull quote from the same chapter as the top result
+  const pullquote = topChunks[0] ? pickQuoteForChapter(topChunks[0].source) : null;
+
   // 3. Stream response — first line is JSON metadata, rest is streamed text
   const stream = await ai.models.generateContentStream({
     model: "gemini-2.5-flash",
@@ -75,7 +95,7 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       const encoder = new TextEncoder();
       // First chunk: metadata JSON on its own line — client parses this
-      controller.enqueue(encoder.encode(JSON.stringify({ sources }) + "\n"));
+      controller.enqueue(encoder.encode(JSON.stringify({ sources, pullquote }) + "\n"));
       try {
         for await (const chunk of stream) {
           if (chunk.text) controller.enqueue(encoder.encode(chunk.text));

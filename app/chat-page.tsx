@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, FormEvent } from "react";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
-import type { SourceRef } from "./api/chat/route";
+import type { SourceRef, PullQuote } from "./api/chat/route";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -44,6 +44,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   sources?: SourceRef[];
+  pullquote?: PullQuote | null;
   streaming?: boolean;
 }
 
@@ -96,6 +97,7 @@ export default function ChatPage({
       let leftover = "";
       let accumulated = "";
       let latestSources: SourceRef[] = [];
+      let latestPullquote: PullQuote | null = null;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -112,6 +114,7 @@ export default function ChatPage({
                 latestSources = meta.sources as SourceRef[];
                 setActiveSources(latestSources);
               }
+              if (meta.pullquote) latestPullquote = meta.pullquote as PullQuote;
             } catch { /* treat as text */ }
             metaDone = true;
             accumulated = leftover.slice(nl + 1);
@@ -130,7 +133,7 @@ export default function ChatPage({
 
       setMessages((prev) => {
         const updated = [...prev];
-        updated[updated.length - 1] = { role: "assistant", content: accumulated, sources: latestSources };
+        updated[updated.length - 1] = { role: "assistant", content: accumulated, sources: latestSources, pullquote: latestPullquote };
         return updated;
       });
     } catch {
@@ -268,6 +271,17 @@ export default function ChatPage({
                         ${msg.streaming ? "cursor" : ""}`}>
                       {msg.content ? <ReactMarkdown>{msg.content}</ReactMarkdown> : "…"}
                     </div>
+
+                    {!msg.streaming && msg.pullquote && (
+                      <div className="mt-5 rounded-xl border border-cardEdge bg-card px-5 py-4">
+                        <p className="text-[10px] font-semibold tracking-[1.4px] uppercase text-clay mb-[10px]">
+                          From your book · {msg.pullquote.source}
+                        </p>
+                        <p className="font-serif italic text-[17px] leading-[1.55] text-ink">
+                          &ldquo;{msg.pullquote.text}&rdquo;
+                        </p>
+                      </div>
+                    )}
 
                     {msg.sources && msg.sources.length > 0 && (
                       <p className="text-[11.5px] text-muted mt-4">
