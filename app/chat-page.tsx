@@ -209,7 +209,8 @@ export default function ChatPage({
         </nav>
 
         <div className="p-[14px] border-t border-line">
-          <div className="flex items-center gap-3 p-[9px] rounded-[10px] hover:bg-[#E4D3B8] transition-colors cursor-pointer">
+          <a href="https://mike-dono-0815.github.io/homepage/#book" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-3 p-[9px] rounded-[10px] hover:bg-[#E4D3B8] transition-colors">
             <div className="w-10 h-[54px] flex-none rounded-[3px] overflow-hidden shadow-sm">
               <Image src="/title-page.png" alt="The Fork in the Road" width={40} height={54} className="object-cover w-full h-full" />
             </div>
@@ -217,7 +218,7 @@ export default function ChatPage({
               <p className="text-[12px] font-semibold text-ink leading-snug">About the book</p>
               <p className="text-[11px] text-muted leading-snug mt-0.5">Michael Donoser</p>
             </div>
-          </div>
+          </a>
         </div>
       </aside>
 
