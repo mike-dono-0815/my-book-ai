@@ -25,6 +25,9 @@ PULLQUOTE_RE = re.compile(
 )
 
 def clean(text: str) -> str:
+    # Strip LaTeX line comments: % to end of each line (handles %%, % at line end, etc.)
+    text = re.sub(r"(?m)%.*$", "", text)
+
     # Remove formatting wrapper: {\color{...}\large\itshape ...}
     text = re.sub(r"\{\\color\{[^}]*\}[^}]*\}", lambda m: m.group(0), text)
     text = re.sub(r"\{\\color\{[^}]*\}\\large\\itshape\s*", "", text)
